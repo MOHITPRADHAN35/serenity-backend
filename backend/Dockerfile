@@ -7,6 +7,7 @@ WORKDIR /app
 # Copy everything from the backend folder into the container
 COPY . .
 COPY services/facial_emotion_detection/emotion_model.h5 /app/services/facial_emotion_detection/
+RUN apt-get update && apt-get install -y git
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
