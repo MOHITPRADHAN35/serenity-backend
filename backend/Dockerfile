@@ -2,23 +2,24 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Install system packages
+# Install system packages (added python3-distutils!)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     build-essential \
     python3-dev \
+    python3-distutils \
     libffi-dev \
     libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy all code
-COPY requirements.txt /app/
+COPY . /app
 
 # Create venv and install requirements
 RUN python -m venv /opt/venv \
  && /opt/venv/bin/pip install --upgrade pip \
  && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
-COPY . /app
+
 # Set PATH to use venv by default
 ENV PATH="/opt/venv/bin:$PATH"
 
