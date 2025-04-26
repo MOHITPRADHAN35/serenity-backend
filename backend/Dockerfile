@@ -1,11 +1,9 @@
-# Use official Python image as base
 FROM python:3.10-slim
 
-# Set working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Install system packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     build-essential \
     python3-dev \
@@ -13,23 +11,22 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy project files
-COPY . /app/
+# Copy all code
+COPY . /app
 
-# Create virtual environment
-RUN python -m venv /opt/venv
+# Create venv and install requirements
+RUN python -m venv /opt/venv \
+ && /opt/venv/bin/pip install --upgrade pip \
+ && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
-# Activate virtual environment and install Python dependencies
-RUN . /opt/venv/bin/activate && pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
-
-# Make sure venv is active for all future RUN/CMD
+# Set PATH to use venv by default
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Give permission to start.sh (if you have it)
+# Give permissions
 RUN chmod +x start.sh
 
-# Expose app port (optional, depends on your app)
+# Expose port (edit if needed)
 EXPOSE 8000
 
-# Command to run your app
+# Default command
 CMD ["bash", "start.sh"]
