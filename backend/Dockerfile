@@ -12,13 +12,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy all code
-COPY . /app
+COPY requirements.txt /app/
 
 # Create venv and install requirements
 RUN python -m venv /opt/venv \
  && /opt/venv/bin/pip install --upgrade pip \
  && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
-
+COPY . /app
 # Set PATH to use venv by default
 ENV PATH="/opt/venv/bin:$PATH"
 
