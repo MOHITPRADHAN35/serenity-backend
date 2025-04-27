@@ -1,6 +1,6 @@
 #Serenity - AI Wellness Companion
 
-![Serenity Logo](logo.png)
+![Banner](banner.png)
 
 **Serenity** is your real-time AI wellness companion, designed to enhance emotional well-being by analyzing emotions through text and facial expressions. Powered by Groq, Serenity provides fast, accurate, and meaningful insights into your emotions to help you manage stress, track your mental health, and stay emotionally balanced.
 
