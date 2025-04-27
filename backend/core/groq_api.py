@@ -3,13 +3,14 @@
 import os
 import requests
 from typing import List, Dict
-from dotenv import load_dotenv  # 🆕
+from dotenv import load_dotenv
 
-load_dotenv()  # 🆕 Load .env variables early
+# Load environment variables
+load_dotenv()
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_BASE_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODEL = os.getenv("GROQ_TEXT_MODEL", "llama3-70b-819")
+MODEL = os.getenv("GROQ_TEXT_MODEL", "llama3-70b-8192")
 
 HEADERS = {
     "Authorization": f"Bearer {GROQ_API_KEY}",
@@ -17,10 +18,6 @@ HEADERS = {
 }
 
 def generate_chat_response(messages: List[Dict[str, str]]) -> str:
-    """
-    Calls the Groq API with a list of messages [{role: user/assistant, content: text}, ...]
-    Returns the assistant's reply as a string.
-    """
     payload = {
         "model": MODEL,
         "messages": messages,
@@ -29,21 +26,25 @@ def generate_chat_response(messages: List[Dict[str, str]]) -> str:
         "stream": False
     }
 
-    response = requests.post(GROQ_BASE_URL, headers=HEADERS, json=payload)
+    try:
+        response = requests.post(GROQ_BASE_URL, headers=HEADERS, json=payload)
 
-    if response.status_code == 200:
-        reply = response.json()["choices"][0]["message"]["content"]
-        return reply.strip()
-    else:
-        print("Groq API Error:", response.text)
-        return "Sorry, I had trouble thinking clearly just now. Can you try again?"
+        if response.status_code == 200:
+            reply = response.json()["choices"][0]["message"]["content"]
+            return reply.strip()
+        else:
+            print("Groq API Error:", response.status_code, response.text)
+            return f"Groq API Error {response.status_code}: {response.text}"
+
+    except Exception as e:
+        print("Exception during Groq API call:", str(e))
+        return f"Exception: {str(e)}"
 
 
-# Example usage (for dev testing)
+# Example usage (optional)
 if __name__ == "__main__":
     test_messages = [
-        {"role": "system", "content": "You are Serenity, a supportive mental wellness assistant."},
-        {"role": "user", "content": "Hi, I'm feeling kinda low today."}
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Hello, how are you?"}
     ]
-    reply = generate_chat_response(test_messages)
-    print("Bot:", reply)
+    print("Bot reply:", generate_chat_response(test_messages))
